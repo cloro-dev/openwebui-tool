@@ -47,10 +47,8 @@ Open WebUI supports MCP servers over Streamable HTTP from version 0.6.31. cloro'
 7. Open **Advanced** and set **Function Name Filter List** to:
 
    ```
-   scrape_google, scrape_chatgpt, scrape_google_ai_mode, scrape_gemini, resolve_google_redirect, list_countries
+   scrape_google, scrape_chatgpt, scrape_google_ai_mode, scrape_bing_aimode, scrape_gemini, resolve_google_redirect, list_countries
    ```
-
-   The MCP server has no Bing AI Mode tool. To use Bing AI Mode, install the tool of Option 1.
 
    The server also lists tools for other engines. Use only the tools in this list. The filter hides the others from the model.
 8. Set **Access Control** for the users who can use the server, then save.

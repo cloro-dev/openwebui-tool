@@ -5,7 +5,7 @@ author_url: https://cloro.dev?utm_source=open-webui&utm_medium=byok
 git_url: https://github.com/cloro-dev/openwebui-tool.git
 description: Google results with the AI Overview, and the answers that ChatGPT, Google AI Mode, Gemini and Bing AI Mode show to users, with their sources. Needs a cloro API key.
 required_open_webui_version: 0.13.0
-version: 0.1.0
+version: 0.2.0
 license: MIT
 """
 

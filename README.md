@@ -1,6 +1,6 @@
 # cloro tool for Open WebUI
 
-Give Open WebUI models four tools from [cloro](https://cloro.dev?utm_source=open-webui&utm_medium=byok):
+Give Open WebUI models five tools from [cloro](https://cloro.dev?utm_source=open-webui&utm_medium=byok):
 
 | Tool | What it returns | cloro credits |
 | --- | --- | --: |
@@ -8,6 +8,7 @@ Give Open WebUI models four tools from [cloro](https://cloro.dev?utm_source=open
 | `ask_chatgpt` | The answer that the ChatGPT web app shows, with its sources | 7 |
 | `ask_google_ai_mode` | The answer that Google AI Mode shows, with its sources | 6 |
 | `ask_gemini` | The answer that the Gemini web app shows, with its sources | 6 |
+| `ask_bing_ai_mode` | The answer that Bing AI Mode shows, with its sources | 6 |
 
 Each source is also sent to the chat as a citation. The free plan has 500 credits a month.
 
@@ -29,6 +30,7 @@ Example prompts:
 - "What does ChatGPT recommend for best CRM for startups, and which sources does it cite?"
 - "Does Google's AI Overview for 'ai visibility tracking' cite example.com? Check in the US and Germany."
 - "Compare the Gemini and Google AI Mode answers for 'best running shoes for flat feet'."
+- "What does Bing AI Mode say about example.com, and which pages does it cite?"
 
 The tool needs `httpx` and `pydantic`, which Open WebUI already installs.
 
@@ -47,6 +49,8 @@ Open WebUI supports MCP servers over Streamable HTTP from version 0.6.31. cloro'
    ```
    scrape_google, scrape_chatgpt, scrape_google_ai_mode, scrape_gemini, resolve_google_redirect, list_countries
    ```
+
+   The MCP server has no Bing AI Mode tool. To use Bing AI Mode, install the tool of Option 1.
 
    The server also lists tools for other engines. Use only the tools in this list. The filter hides the others from the model.
 8. Set **Access Control** for the users who can use the server, then save.

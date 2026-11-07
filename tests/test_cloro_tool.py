@@ -144,6 +144,7 @@ def test_google_search_without_ai_overview(monkeypatch):
         ("ask_chatgpt", "chatgpt", "ChatGPT"),
         ("ask_google_ai_mode", "aimode", "Google AI Mode"),
         ("ask_gemini", "gemini", "Gemini"),
+        ("ask_bing_ai_mode", "bing/aimode", "Bing AI Mode"),
     ],
 )
 def test_answer_tools(monkeypatch, method, engine, label):
@@ -199,11 +200,11 @@ def test_missing_key_makes_no_request(monkeypatch):
     assert calls == []
 
 
-def test_public_methods_are_the_four_tools():
+def test_public_methods_are_the_five_tools():
     names = sorted(
         n for n in dir(cloro_tool.Tools()) if not n.startswith("_") and callable(getattr(cloro_tool.Tools(), n))
     )
-    assert names == ["Valves", "ask_chatgpt", "ask_gemini", "ask_google_ai_mode", "google_search"]
+    assert names == ["Valves", "ask_bing_ai_mode", "ask_chatgpt", "ask_gemini", "ask_google_ai_mode", "google_search"]
 
 
 CAPTURES = os.environ.get("CLORO_CAPTURE_DIR")

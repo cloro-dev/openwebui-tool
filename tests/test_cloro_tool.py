@@ -44,6 +44,35 @@ GOOGLE = {
     },
 }
 
+BING = {
+    "success": True,
+    "result": {
+        "organicResults": [
+            {
+                "position": 1,
+                "title": "Best rank trackers",
+                "link": "https://example.com/rank-trackers/",
+                "displayedLink": "https://example.com › rank-trackers",
+                "snippet": "A list.",
+                "page": 1,
+            },
+            {"position": 2, "title": "Empty link", "link": "", "page": 1},
+            {"position": 3, "title": "Other", "link": "https://example.org/page", "page": 1},
+        ],
+        "aioverview": {
+            "text": "Popular rank trackers include Semrush and Ahrefs.",
+            "sources": [
+                {
+                    "position": 1,
+                    "label": "Best rank trackers",
+                    "url": "https://example.com/rank-trackers/",
+                    "description": None,
+                },
+            ],
+        },
+    },
+}
+
 CHATGPT = {
     "success": True,
     "result": {
@@ -138,6 +167,29 @@ def test_google_search_without_ai_overview(monkeypatch):
     assert "Google showed no AI Overview" in out
 
 
+def test_bing_search_request_and_output(monkeypatch):
+    calls = stub_http(monkeypatch, BING)
+    emitter = Recorder()
+    out = run(make_tool(country="DE").bing_search("rank tracker", country="gb", __event_emitter__=emitter))
+
+    assert calls[0]["url"] == "https://api.cloro.dev/v1/monitor/bing"
+    assert calls[0]["json"] == {"query": "rank tracker", "country": "GB", "include": {"aioverview": True}}
+    assert out.startswith("AI Overview:\nPopular rank trackers include Semrush and Ahrefs.")
+    assert "[1] Best rank trackers - https://example.com/rank-trackers/" in out
+    assert "1. Best rank trackers - https://example.com/rank-trackers/" in out
+    assert "Empty link" not in out
+    assert "3. Other - https://example.org/page" in out
+    assert "People also ask" not in out
+    assert [c["source"]["url"] for c in emitter.citations()] == ["https://example.com/rank-trackers/"]
+
+
+def test_bing_search_without_ai_overview(monkeypatch):
+    payload = {"success": True, "result": {"organicResults": BING["result"]["organicResults"]}}
+    stub_http(monkeypatch, payload)
+    out = run(make_tool().bing_search("rank tracker"))
+    assert out.startswith("Bing showed no AI Overview for this query.")
+
+
 @pytest.mark.parametrize(
     ("method", "engine", "label"),
     [
@@ -200,11 +252,19 @@ def test_missing_key_makes_no_request(monkeypatch):
     assert calls == []
 
 
-def test_public_methods_are_the_five_tools():
+def test_public_methods_are_the_six_tools():
     names = sorted(
         n for n in dir(cloro_tool.Tools()) if not n.startswith("_") and callable(getattr(cloro_tool.Tools(), n))
     )
-    assert names == ["Valves", "ask_bing_ai_mode", "ask_chatgpt", "ask_gemini", "ask_google_ai_mode", "google_search"]
+    assert names == [
+        "Valves",
+        "ask_bing_ai_mode",
+        "ask_chatgpt",
+        "ask_gemini",
+        "ask_google_ai_mode",
+        "bing_search",
+        "google_search",
+    ]
 
 
 CAPTURES = os.environ.get("CLORO_CAPTURE_DIR")

@@ -1,11 +1,11 @@
 """
-title: cloro: Google AI Overview, ChatGPT, AI Mode, Gemini and Bing AI Mode answers
+title: cloro: Google and Bing AI Overviews, ChatGPT, AI Mode, Gemini and Bing AI Mode answers
 author: cloro
 author_url: https://cloro.dev?utm_source=open-webui&utm_medium=byok
 git_url: https://github.com/cloro-dev/openwebui-tool.git
-description: Google results with the AI Overview, and the answers that ChatGPT, Google AI Mode, Gemini and Bing AI Mode show to users, with their sources. Needs a cloro API key.
+description: Google and Bing results with the AI Overview, and the answers that ChatGPT, Google AI Mode, Gemini and Bing AI Mode show to users, with their sources. Needs a cloro API key.
 required_open_webui_version: 0.13.0
-version: 0.2.0
+version: 0.3.0
 license: MIT
 """
 
@@ -35,11 +35,22 @@ class Tools:
         :param query: The search query.
         :param country: Optional ISO 3166-1 alpha-2 country code. Leave empty to use the default.
         """
+        return await self._search("google", "Google", query, country, __event_emitter__)
+
+    async def bing_search(self, query: str, country: str = "", __event_emitter__=None) -> str:
+        """
+        Search Bing and return the organic results and the AI Overview (Bing's AI summary at the top of the results page), with the sources the AI Overview cites. Costs 7 cloro credits.
+        :param query: The search query. The maximum is 3,500 characters after URL encoding, and fewer for non-Latin scripts.
+        :param country: Optional ISO 3166-1 alpha-2 country code. Leave empty to use the default. CN, KR and RU are not available.
+        """
+        return await self._search("bing", "Bing", query, country, __event_emitter__)
+
+    async def _search(self, engine: str, label: str, query: str, country: str, emitter) -> str:
         result = await self._call(
-            "google",
+            engine,
             {"query": query, "country": self._country(country), "include": {"aioverview": True}},
-            f'Searching Google for "{query}"',
-            __event_emitter__,
+            f'Searching {label} for "{query}"',
+            emitter,
         )
         if isinstance(result, str):
             return result
@@ -51,9 +62,9 @@ class Tools:
             lines.append("AI Overview:")
             lines.append(aio["text"].strip())
             lines.extend(_format_sources(sources))
-            await _emit_sources(__event_emitter__, sources)
+            await _emit_sources(emitter, sources)
         else:
-            lines.append("Google showed no AI Overview for this query.")
+            lines.append(f"{label} showed no AI Overview for this query.")
 
         lines.append("")
         lines.append("Organic results:")

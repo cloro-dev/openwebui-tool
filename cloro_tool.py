@@ -5,7 +5,7 @@ author_url: https://cloro.dev?utm_source=open-webui&utm_medium=byok
 git_url: https://github.com/cloro-dev/openwebui-tool.git
 description: Google and Bing results with the AI Overview, and the answers that ChatGPT, Google AI Mode, Gemini and Bing AI Mode show to users, with their sources. Needs a cloro API key.
 required_open_webui_version: 0.13.0
-version: 0.3.0
+version: 0.4.0
 license: MIT
 """
 
@@ -31,7 +31,7 @@ class Tools:
 
     async def google_search(self, query: str, country: str = "", __event_emitter__=None) -> str:
         """
-        Search Google and return the organic results and the AI Overview, with the sources the AI Overview cites. Costs 7 cloro credits.
+        Search Google and return the organic results, the ads and the AI Overview, with the sources the AI Overview cites. Costs 7 cloro credits.
         :param query: The search query.
         :param country: Optional ISO 3166-1 alpha-2 country code. Leave empty to use the default.
         """
@@ -39,7 +39,7 @@ class Tools:
 
     async def bing_search(self, query: str, country: str = "", __event_emitter__=None) -> str:
         """
-        Search Bing and return the organic results and the AI Overview (Bing's AI summary at the top of the results page), with the sources the AI Overview cites. Costs 7 cloro credits.
+        Search Bing and return the organic results, the ads and the AI Overview (Bing's AI summary at the top of the results page), with the sources the AI Overview cites. Costs 7 cloro credits.
         :param query: The search query. The maximum is 3,500 characters after URL encoding, and fewer for non-Latin scripts.
         :param country: Optional ISO 3166-1 alpha-2 country code. Leave empty to use the default. CN, KR and RU are not available.
         """
@@ -75,6 +75,13 @@ class Tools:
             lines.append(f"{item.get('position')}. {item.get('title', '')} - {link}")
             if item.get("snippet"):
                 lines.append(f"   {item['snippet']}")
+
+        ads = [ad for ad in result.get("ads") or [] if isinstance(ad, dict)]
+        if ads:
+            lines.append("")
+            lines.append("Ads:")
+            for ad in ads:
+                lines.extend(_format_ad(ad))
 
         questions = [q.get("question") for q in result.get("peopleAlsoAsk") or [] if q.get("question")]
         if questions:
@@ -175,6 +182,19 @@ def _format_sources(sources: list) -> list:
     lines = ["", "Sources:"]
     for i, src in enumerate(sources, 1):
         lines.append(f"[{i}] {src.get('label') or src['url']} - {src['url']}")
+    return lines
+
+
+def _format_ad(ad: dict) -> list:
+    """Every field of an ad can be absent. Ads are not sent to the chat as citations."""
+    place = " ".join(str(v) for v in (ad.get("type"), ad.get("blockPosition"), ad.get("position")) if v)
+    link = ad.get("url") or ""
+    lines = [f"- [{place}] {ad.get('title') or ''}" + (f" - {link}" if _is_usable(link) else "")]
+    price = ad.get("price")
+    details = [ad.get("description"), price.get("raw") if isinstance(price, dict) else None, ad.get("store")]
+    details = [d for d in details if d]
+    if details:
+        lines.append(f"   {' | '.join(details)}")
     return lines
 
 

@@ -4,14 +4,14 @@ Give Open WebUI models six tools from [cloro](https://cloro.dev?utm_source=open-
 
 | Tool | What it returns | cloro credits |
 | --- | --- | --: |
-| `google_search` | Google organic results, the AI Overview and the sources it cites, People also ask | 7 |
-| `bing_search` | Bing organic results, the AI Overview (Bing's AI summary) and the sources it cites | 7 |
+| `google_search` | Google organic results, the ads, the AI Overview and the sources it cites, People also ask | 7 |
+| `bing_search` | Bing organic results, the ads, the AI Overview (Bing's AI summary) and the sources it cites | 7 |
 | `ask_chatgpt` | The answer that the ChatGPT web app shows, with its sources | 7 |
 | `ask_google_ai_mode` | The answer that Google AI Mode shows, with its sources | 6 |
 | `ask_gemini` | The answer that the Gemini web app shows, with its sources | 6 |
 | `ask_bing_ai_mode` | The answer that Bing AI Mode shows, with its sources | 6 |
 
-`google_search` and `bing_search` do not return the ads. Each source is also sent to the chat as a citation. The free plan has 500 credits a month.
+`google_search` and `bing_search` list the ads on the page in an "Ads" section, when the page has ads. The ads cost no extra credits. Each source is also sent to the chat as a citation. The ads are not. The free plan has 500 credits a month.
 
 Use it to see what Google, Bing and the AI assistants tell users about a topic or a brand, and which pages they cite. For plain web search, a SERP-only provider costs less.
 

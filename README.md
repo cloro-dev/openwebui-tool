@@ -11,7 +11,7 @@ Give Open WebUI models six tools from [cloro](https://cloro.dev?utm_source=open-
 | `ask_gemini` | The answer that the Gemini web app shows, with its sources | 6 |
 | `ask_bing_ai_mode` | The answer that Bing AI Mode shows, with its sources | 6 |
 
-Each source is also sent to the chat as a citation. The free plan has 500 credits a month.
+`google_search` and `bing_search` do not return the ads. Each source is also sent to the chat as a citation. The free plan has 500 credits a month.
 
 Use it to see what Google, Bing and the AI assistants tell users about a topic or a brand, and which pages they cite. For plain web search, a SERP-only provider costs less.
 
@@ -49,10 +49,10 @@ Open WebUI supports MCP servers over Streamable HTTP from version 0.6.31. cloro'
 7. Open **Advanced** and set **Function Name Filter List** to:
 
    ```
-   scrape_google, scrape_chatgpt, scrape_google_ai_mode, scrape_bing_aimode, scrape_gemini, resolve_google_redirect, list_countries
+   scrape_google, scrape_bing, scrape_chatgpt, scrape_google_ai_mode, scrape_bing_aimode, scrape_gemini, resolve_google_redirect, list_countries
    ```
 
-   The MCP server has no Bing Search tool. To use Bing Search, install the tool of Option 1.
+   `scrape_bing` is the Bing Search tool. It returns the organic results and the ads. With `include.aioverview`, it also returns the AI Overview.
 
    The server also lists tools for other engines. Use only the tools in this list. The filter hides the others from the model.
 8. Set **Access Control** for the users who can use the server, then save.

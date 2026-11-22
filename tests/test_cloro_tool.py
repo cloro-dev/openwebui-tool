@@ -190,6 +190,50 @@ def test_bing_search_without_ai_overview(monkeypatch):
     assert out.startswith("Bing showed no AI Overview for this query.")
 
 
+ADS = [
+    {
+        "position": 1,
+        "blockPosition": "top",
+        "type": "RESULT",
+        "title": "Rank tracker sale",
+        "url": "https://shop.example/rank",
+        "page": 1,
+        "description": "Track ranks.",
+    },
+    {
+        "position": 1,
+        "blockPosition": "rhs",
+        "type": "SHOPPING_CARD",
+        "title": "SEO book",
+        "url": "https://www.google.com/goto?url=x",
+        "price": {"value": 29, "currency": "$", "raw": "$29.00"},
+        "store": "Shop",
+    },
+    {},
+]
+
+
+@pytest.mark.parametrize(("method", "payload"), [("google_search", GOOGLE), ("bing_search", BING)])
+def test_search_lists_the_ads(monkeypatch, method, payload):
+    payload = {"success": True, "result": {**payload["result"], "ads": ADS}}
+    stub_http(monkeypatch, payload)
+    emitter = Recorder()
+    out = run(getattr(make_tool(), method)("rank tracker", __event_emitter__=emitter))
+
+    assert (
+        "\nAds:\n"
+        "- [RESULT top 1] Rank tracker sale - https://shop.example/rank\n   Track ranks.\n"
+        "- [SHOPPING_CARD rhs 1] SEO book\n   $29.00 | Shop\n"
+        "- [] "
+    ) in out
+    assert [c["source"]["url"] for c in emitter.citations()] == ["https://example.com/rank-trackers/"]
+
+
+def test_search_without_ads(monkeypatch):
+    stub_http(monkeypatch, BING)
+    assert "Ads:" not in run(make_tool().bing_search("rank tracker"))
+
+
 @pytest.mark.parametrize(
     ("method", "engine", "label"),
     [

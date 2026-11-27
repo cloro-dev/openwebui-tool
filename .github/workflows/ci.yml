@@ -23,5 +23,7 @@ jobs:
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
+          # The repository has no dependency file for the cache key.
+          enable-cache: false
       - name: Run the tests
         run: uv run --with pytest --with httpx --with pydantic pytest -q
